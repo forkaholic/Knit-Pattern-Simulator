@@ -2,13 +2,9 @@
 Create a knitting pattern template and display the pattern in a "3D" environment
 
 ## Prerequisites
-* CMake
-* freeglut
-* GLEW
+* [CMake](https://cmake.org/download/)
+* [freeglut](https://freeglut.sourceforge.net/index.php#download)
+* [GLEW]()
 
 ## Installation 
-First, install CMake
-
-Next, install freeglut using the instructions [provided here](https://freeglut.sourceforge.net/docs/install.php).
-
 
