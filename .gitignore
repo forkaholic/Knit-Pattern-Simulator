@@ -1,1 +1,6 @@
 .vs/
+out*
+bin
+include
+lib
+*.dll

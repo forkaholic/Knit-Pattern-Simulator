@@ -1,12 +1,32 @@
-#include <GL/freeglut.h>
 #include <iostream>
+#include <GL/glew.h>
+#include <GL/freeglut.h>
+
 
 void RenderSceneCB() {
+	static GLfloat mods[4] = {1.0f, -1.0f, 1.0f, -1.0f};
+	static GLfloat colors[4] = {50.0f/256.0f, 0.0f/256.0f, 200.0f/256.0f, 50.0f/256.0f};
+	glClearColor(colors[0], colors[1], colors[2], colors[3]);
+
+	for (int i = 0; i < 4; i++) {
+		colors[i] += mods[i] * (1.0f / 2560.0);
+		if (colors[i] >= 1.0f) {
+			mods[i] = -1.0f;
+		}
+		else if (colors[i] <= 0.0f) {
+			mods[i] = 1.0f;
+		}
+	}
+
 	glClear(GL_COLOR_BUFFER_BIT);
+	glutPostRedisplay();
 	glutSwapBuffers();
 }
 
 int main(int argc, char** argv) {
+	glewExperimental = GL_TRUE;
+	glewInit();
+	
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 
