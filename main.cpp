@@ -4,17 +4,14 @@
 
 
 void RenderSceneCB() {
-	static GLfloat mods[4] = {1.0f, -1.0f, 1.0f, -1.0f};
+	static GLfloat mods[4] = {1.0f, -.9f, 0.8f, -0.7f};
 	static GLfloat colors[4] = {50.0f/256.0f, 0.0f/256.0f, 200.0f/256.0f, 50.0f/256.0f};
-	glClearColor(colors[0], colors[1], colors[2], colors[3]);
+	glClearColor(colors[0], colors[1], colors[2], 1.0f);
 
 	for (int i = 0; i < 4; i++) {
 		colors[i] += mods[i] * (1.0f / 2560.0);
-		if (colors[i] >= 1.0f) {
-			mods[i] = -1.0f;
-		}
-		else if (colors[i] <= 0.0f) {
-			mods[i] = 1.0f;
+		if (colors[i] >= 1.0f || colors[i] <= 0.0f) {
+			mods[i] *= -1.0f;
 		}
 	}
 
