@@ -1,6 +1,9 @@
-.vs/
-out*
-bin
-include
-lib
-*.dll
+bin/*
+lib/*
+build/*
+include/GL/*
+.vs
+glew32.dll
+libfreeglut.dll
+
+
