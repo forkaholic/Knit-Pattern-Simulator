@@ -22,7 +22,7 @@ static void RenderSceneCB() {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 	// How to interpret arrays, where to start, how many to process
-	glDrawArrays(GL_POINTS, 0, 1);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	glDisableVertexAttribArray(0);
 
@@ -31,9 +31,35 @@ static void RenderSceneCB() {
 }
 
 static void CreateVertexBuffer() {
-	Vec3f vertices[1];
-	vertices[0] = { };
+	/*
+	  Culling means that any triangle assembled
+	  in a clockwise order will not be rendered
+	  as it is facing the 'back' side, meaning
+	  it is no longer visible
+	*/
+	glEnable(GL_CULL_FACE);
+	
+	/*
+	  Changes which vertex order (CW, CCW) is
+	  considered 'front facing'
+	*/
+	glFrontFace(GL_CW);
 
+	/*
+	  Tells OGL which face to cull, front or back
+	*/
+	glCullFace(GL_FRONT);
+	
+
+	Vec3f vertices[6] = {
+		{-1.0f, -1.0f, 0.0f}, //left
+		{ .25f, -1.0f, 0.0f}, //right
+		{-.25f,  1.0f, 0.0f}, //top
+		{-.25f,  1.0f, 0.0f}, //left
+		{ .25f, -1.0f, 0.0f}, //bottom
+		{ 1.0f,  1.0f, 0.0f}  //right
+};
+	
 	// Number of handles, pointer to GLuint array for x handles
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -44,7 +70,7 @@ int main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 
-	int size[2] = { 1920, 1080 };
+	int size[2] = { 720, 480 };
 	glutInitWindowSize(size[0], size[1]);
 
 	int pos[2] = { 0, 0 };
