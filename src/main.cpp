@@ -17,31 +17,32 @@ int main(int, char**);
 
 std::string vfn = "./src/vertex.vs", ffn = "./src/fragment.fs";
 GLuint VBO;
+GLint gScaleLocation;
 Vec3f vertices[NUMVERTS];
-
-// Function that is called repeatedly in the main loop to update the model
-static void IdleCB() {
-	for (int i = 0; i < NUMVERTS; i++) {
-		if (vertices[i].x >= 1.0f) {
-			vertices[i].x = -1.0f;
-		}
-		else {
-			vertices[i].x += 0.01f;
-		}
-	}
-	glutPostRedisplay();
-}
 
 // Function that actually draws the screen, called repeatedly in the main loop during drawing phases
 static void RenderSceneCB() {
 	// Clear the window
 	glClear(GL_COLOR_BUFFER_BIT);
 
+	// Update screen here
+	static GLfloat gScale = 0.5f;
+	static GLfloat delta = -0.0001f;
+
+	if (gScale >= 1.0f || gScale <= 0.5f) {
+		delta *= -1;
+	}
+
+	glUniform1f(gScaleLocation, gScale);
+
+	gScale += delta;
+
 	// Bind the gl array buffer to the global VBO object
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
 	// Enable changing of position (attribute 0)
 	glEnableVertexAttribArray(0);
+
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
@@ -51,6 +52,8 @@ static void RenderSceneCB() {
 	glDisableVertexAttribArray(0);
 
 	glutSwapBuffers();
+
+	glutPostRedisplay();
 }
 
 // Basic read function, get results from out_str
@@ -131,6 +134,12 @@ static void CompileShaders() {
 		fprintf(stderr, "Failed to link shader: %s\n", log);
 		exit(1);
 	}
+	
+	gScaleLocation = glGetUniformLocation(shader, "gScale");
+	if (gScaleLocation == -1) {
+		printf("Error getting location of gScale\n");
+		exit(1);
+	}
 
 	glValidateProgram(shader);
 	glGetProgramiv(shader, GL_VALIDATE_STATUS, &success);
@@ -166,17 +175,17 @@ static void CreateVertexBuffer() {
 
 
 	
-	vertices[0] = { -1.0f, -1.0f, 0.0f }; //left
-	vertices[1] = {  .25f, -1.0f, 0.0f };//right
-	vertices[2] = { -.25f,  1.0f, 0.0f }; //top
-	vertices[3] = { -.25f,  1.0f, 0.0f }; //left
-	vertices[4] = {  .25f, -1.0f, 0.0f }; //bottom
-	vertices[5] = {  1.0f,  1.0f, 0.0f };  //right
+	vertices[0] = { -0.66f, -0.66f, 0.0f }; //left
+	vertices[1] = { 0.165f, -0.66f, 0.0f };//right
+	vertices[2] = { -0.165f, 0.66f, 0.0f }; //top
+	vertices[3] = { -0.165f, 0.66f, 0.0f }; //left
+	vertices[4] = { 0.165f, -0.66f, 0.0f }; //bottom
+	vertices[5] = {  0.66f,  0.66f, 0.0f };  //right
 
 	// Number of handles, pointer to GLuint array for x handles
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
 }
 
 int main(int argc, char** argv) {
@@ -213,9 +222,6 @@ int main(int argc, char** argv) {
 	glutDisplayFunc(RenderSceneCB);
 
 
-
-
-	//glutIdleFunc(IdleCB);
 	/*
 	 Needs to be the last function call of main
 	 as glutMainLoop never returns
